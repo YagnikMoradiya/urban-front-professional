@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import {eye_close} from '../assets';
 import {COLORS, FONTS, SIZES} from '../utils/theme';
 
 const CustomInput = ({
@@ -46,7 +47,21 @@ const CustomInput = ({
         />
         {icon && (
           <TouchableOpacity onPress={() => setSecurePassword(!securePassword)}>
-            <Image style={styles.icon} source={icon} />
+            {securePassword ? (
+              <Image
+                style={styles.icon}
+                source={icon}
+                height={15}
+                resizeMode="contain"
+              />
+            ) : (
+              <Image
+                style={{tintColor: COLORS.gray}}
+                source={eye_close}
+                height={15}
+                resizeMode="contain"
+              />
+            )}
           </TouchableOpacity>
         )}
       </View>
@@ -78,7 +93,7 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   icon: {
-    margin: SIZES.padding,
+    // margin: SIZES.padding,
   },
   error_container: {
     padding: 3,

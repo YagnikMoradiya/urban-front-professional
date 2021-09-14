@@ -24,7 +24,6 @@ import {COLORS, FONTS, SIZES} from '../utils/theme';
 
 const SignUpScreen = ({navigation}) => {
   const [shopName, setShopName] = useState('');
-  const [ownerName, setOwnerName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
@@ -37,10 +36,17 @@ const SignUpScreen = ({navigation}) => {
   const dispatch = useDispatch();
 
   const register = async () => {
+    if (emailError || passwordError || confirmPasswordError) return;
+
+    setShopName('');
+    setEmail('');
+    setPhone('');
+    setPassword('');
+    setConfirmPassword('');
+
     try {
       const data = {
         name: shopName,
-        ownerName,
         email,
         phone,
         password,
@@ -65,7 +71,6 @@ const SignUpScreen = ({navigation}) => {
           resizeMode="cover"
           style={styles.container}>
           <StatusBar backgroundColor={COLORS.gray2} barStyle="dark-content" />
-          <Image source={logo} style={styles.logo} />
 
           <View style={styles.content_container}>
             <View style={styles.welcome_container}>
@@ -78,13 +83,6 @@ const SignUpScreen = ({navigation}) => {
                 placeholder="Shop Name"
                 value={shopName}
                 setValue={setShopName}
-                contentContainerStyle={{marginTop: 15}}
-              />
-              <CustomInput
-                type="default"
-                placeholder="Owner Name"
-                value={ownerName}
-                setValue={setOwnerName}
                 contentContainerStyle={{marginTop: 15}}
               />
               <CustomInput

@@ -14,7 +14,9 @@ const Stack = createNativeStackNavigator();
 const Auth = () => {
   const dispatch = useDispatch();
 
-  const {is_loggedin, is_verified} = useSelector(state => state.shopData);
+  // const {is_loggedin, is_verified} = useSelector(state => state.shopData);
+  let is_loggedin = true,
+    is_verified = false;
 
   const getData = async () => {
     try {
@@ -30,10 +32,10 @@ const Auth = () => {
     }
   };
 
-  useEffect(() => {
-    const unsubscribe = getData();
-    return unsubscribe;
-  }, []);
+  // useEffect(() => {
+  //   const unsubscribe = getData();
+  //   return unsubscribe;
+  // }, []);
 
   return (
     <NavigationContainer>

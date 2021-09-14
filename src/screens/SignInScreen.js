@@ -30,9 +30,9 @@ const SignInScreen = ({navigation}) => {
   const dispatch = useDispatch();
 
   const login = async () => {
+    if (emailError || passwordError) return;
     setEmail('');
     setPassword('');
-
     try {
       const data = {email, password};
 
@@ -41,7 +41,11 @@ const SignInScreen = ({navigation}) => {
       await setDataObj(shop.data.token, 'token');
       dispatch(setShopData(shop.data));
     } catch (error) {
-      console.error(error);
+      if (error === 'Wrong Email') {
+        setEmailError(error);
+      } else if (error === 'Wrong Password') {
+        setPasswordError(error);
+      }
     }
   };
 
@@ -55,7 +59,7 @@ const SignInScreen = ({navigation}) => {
           resizeMode="cover"
           style={styles.container}>
           <StatusBar backgroundColor={COLORS.gray2} barStyle="dark-content" />
-          <Image source={logo} style={styles.logo} />
+          {/* <Image source={logo} style={styles.logo} /> */}
 
           <View style={styles.content_container}>
             <View style={styles.welcome_container}>
