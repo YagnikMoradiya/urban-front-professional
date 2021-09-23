@@ -81,9 +81,9 @@ export const ApiGetNoAuth = type => {
 };
 
 export const ApiPost = (type, userData) => {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     axios
-      .post(BaseURL + type, userData, getHttpOptions())
+      .post(BaseURL + type, userData, await getHttpOptions())
       .then(responseJson => {
         resolve(responseJson.data);
       })

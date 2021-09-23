@@ -2,13 +2,15 @@ import React from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity} from 'react-native';
 import {COLORS} from '../utils/theme';
 
-const CustomAvatar = ({source, onPress}) => {
+const CustomAvatar = ({source, onPress, contentContainerStyle}) => {
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress}>
+    <TouchableOpacity
+      style={[styles.container, contentContainerStyle]}
+      onPress={onPress}>
       <Image
         style={{
-          width: 25,
-          height: 25,
+          // width: '100%',
+          // height: '100%',
           resizeMode: 'contain',
         }}
         source={source}
