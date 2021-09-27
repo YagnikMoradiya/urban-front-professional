@@ -1,8 +1,7 @@
-import React, {useEffect, useLayoutEffect, useState} from 'react';
+import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
 import {
   Keyboard,
   KeyboardAvoidingView,
-  Platform,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -12,18 +11,20 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
-  Alert,
 } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {Avatar} from 'react-native-elements';
 import {COLORS} from '../../utils/theme';
+import {ApiGet, ApiPost} from '../../utils/helper';
 
 const ChatScreen = ({navigation, route}) => {
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([]);
 
-  const {chatName, id, image} = route.params;
+  const scrollViewRef = useRef();
+
+  const {chatName, id, image, worker_id} = route.params;
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -65,13 +66,34 @@ const ChatScreen = ({navigation, route}) => {
     });
   }, [navigation]);
 
-  const sendMessage = () => {
-    //
+  const sendMessage = async () => {
+    try {
+      const messageObj = {
+        conversationId: id,
+        senderId: worker_id,
+        text: input,
+      };
+      const message = await ApiPost('/chat/send-message', messageObj);
+
+      setMessages([...messages, message.data]);
+      setInput('');
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  const deleteMessage = id => {
-    //
+  const getMessages = async () => {
+    try {
+      const messages = await ApiGet(`/chat/get-message/${id}`);
+      setMessages(messages.data);
+    } catch (error) {
+      console.error(error);
+    }
   };
+
+  useEffect(() => {
+    getMessages();
+  }, []);
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
@@ -82,47 +104,57 @@ const ChatScreen = ({navigation, route}) => {
         style={styles.container}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <>
-            <ScrollView contentContainerStyle={{paddingTop: 15}}>
-              <TouchableOpacity>
-                <View style={styles.reciever}>
-                  <Avatar
-                    position="absolute"
-                    containerStyle={{
-                      position: 'absolute',
-                      bottom: -15,
-                      right: -5,
-                    }}
-                    size={30}
-                    rounded
-                    source={{
-                      uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRyVSEPJut2FtINpbexjlW-PxQjDqV_jspoSw&usqp=CAU',
-                    }}
-                  />
-                  <Text style={styles.recieverText}>Hello 👋👋</Text>
-                </View>
-              </TouchableOpacity>
-              {/* ) : (
-                  <View key={id} style={styles.sender}>
-                    <Avatar
-                      position="absolute"
-                      containerStyle={{
-                        position: 'absolute',
-                        bottom: -15,
-                        left: -5,
-                      }}
-                      size={30}
-                      rounded
-                      source={{
-                        uri: data.photoURL
-                          ? data.photoURL
-                          : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRyVSEPJut2FtINpbexjlW-PxQjDqV_jspoSw&usqp=CAU',
-                      }}
-                    />
-                    <Text style={styles.senderText}>{data.message}</Text>
-                    <Text style={styles.senderName}>{data.displayName}</Text>
-                  </View>
-                ),
-              )} */}
+            <ScrollView
+              contentContainerStyle={{paddingTop: 15}}
+              ref={scrollViewRef}
+              onContentSizeChange={() =>
+                scrollViewRef.current.scrollToEnd({animated: true})
+              }>
+              {messages.map(message => {
+                if (message?.senderId === worker_id) {
+                  return (
+                    <View style={styles.reciever} key={message._id}>
+                      <Avatar
+                        position="absolute"
+                        containerStyle={{
+                          position: 'absolute',
+                          bottom: -15,
+                          right: -5,
+                        }}
+                        size={30}
+                        rounded
+                        source={{
+                          uri: image
+                            ? image
+                            : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRyVSEPJut2FtINpbexjlW-PxQjDqV_jspoSw&usqp=CAU',
+                        }}
+                      />
+                      <Text style={styles.recieverText}>{message.text}</Text>
+                    </View>
+                  );
+                } else {
+                  return (
+                    <View key={message._id} style={styles.sender}>
+                      <Avatar
+                        position="absolute"
+                        containerStyle={{
+                          position: 'absolute',
+                          bottom: -15,
+                          left: -5,
+                        }}
+                        size={30}
+                        rounded
+                        source={{
+                          uri: image
+                            ? image
+                            : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRyVSEPJut2FtINpbexjlW-PxQjDqV_jspoSw&usqp=CAU',
+                        }}
+                      />
+                      <Text style={styles.senderText}>{message.text}</Text>
+                    </View>
+                  );
+                }
+              })}
             </ScrollView>
             <View style={styles.footer}>
               <TextInput
@@ -132,7 +164,7 @@ const ChatScreen = ({navigation, route}) => {
                 style={styles.inputStyle}
               />
               <TouchableOpacity onPress={sendMessage}>
-                <Ionicons name="send" size={24} color="#2B68E6" />
+                <Ionicons name="send" size={24} color={COLORS.black} />
               </TouchableOpacity>
             </View>
           </>
@@ -194,11 +226,5 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     marginLeft: 10,
     marginBottom: 15,
-  },
-  senderName: {
-    left: 10,
-    paddingRight: 10,
-    fontSize: 10,
-    color: 'white',
   },
 });

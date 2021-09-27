@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {Avatar, ListItem} from 'react-native-elements';
-// import {} from 'nativeba';
 import {useSelector} from 'react-redux';
 import {CustomAvatar} from '.';
 import {COLORS} from '../utils/theme';
@@ -9,8 +8,9 @@ import {COLORS} from '../utils/theme';
 const CustomListItem = ({data, navigation}) => {
   const [messages, setMessages] = useState([]);
   const {shop} = useSelector(state => state.shopData);
+  const {worker_id} = useSelector(state => state.workerData);
 
-  const friendsId = data.members.find(x => x !== shop?.id);
+  const friendsId = data.members.find(x => x !== worker_id);
 
   const friendsData = {
     image: data[`${friendsId}_image`],
@@ -30,6 +30,7 @@ const CustomListItem = ({data, navigation}) => {
           id: data._id,
           image: friendsData.image,
           chatName: friendsData.name,
+          worker_id,
         })
       }>
       <Avatar

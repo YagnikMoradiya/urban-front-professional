@@ -11,6 +11,7 @@ import {
 import {CustomListItem} from '../../components';
 import {COLORS} from '../../utils/theme';
 import {ApiGet} from '../../utils/helper';
+import {useSelector} from 'react-redux';
 
 const chats = [
   {
@@ -34,13 +35,17 @@ const ConversationScreen = ({navigation}) => {
   const [chats, setChats] = useState([]);
   const [selectedChat, setSelectedChat] = useState(null);
 
+  const {worker_id} = useSelector(state => state.workerData);
+
   const signOut = () => {
     //
   };
 
   const getConversations = async () => {
     try {
-      const conversations = await ApiGet('/chat/get-conversation');
+      const conversations = await ApiGet(
+        `/chat/get-conversation-worker/${worker_id}`,
+      );
 
       setChats(conversations.data);
     } catch (error) {
@@ -94,15 +99,7 @@ const ConversationScreen = ({navigation}) => {
       ) : null}
       <ScrollView>
         {chats.map(data => (
-          <CustomListItem
-            key={data._id}
-            data={data}
-            navigation={navigation}
-            // id={id}
-            // chatName={data.chatName}
-            // iconURL={data.iconURL}
-            // enterChat={enterChat}
-          />
+          <CustomListItem key={data._id} data={data} navigation={navigation} />
         ))}
       </ScrollView>
     </SafeAreaView>

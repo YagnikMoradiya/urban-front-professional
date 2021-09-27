@@ -7,6 +7,7 @@ import {getDataObj, setDataObj} from '../utils/storage.helper';
 import {ApiGet, ApiGetNoAuth} from '../utils/helper';
 import {setShopData} from '../redux/action/shopAction';
 import Dashboard from './Dashboard';
+import {setWorker} from '../redux/action/workerAction';
 
 const Stack = createNativeStackNavigator();
 
@@ -20,6 +21,11 @@ const Auth = () => {
   const getData = async () => {
     try {
       const token = await getDataObj();
+      const workerId = await getDataObj('workerId');
+
+      if (workerId) {
+        dispatch(setWorker(workerId));
+      }
 
       if (token) {
         const shop = await ApiGet('/shop/validate-token');
