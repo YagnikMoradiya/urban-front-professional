@@ -160,9 +160,9 @@ export const ApiPatch = (type, userData) => {
 };
 
 export const ApiDelete = (type, userData) => {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     axios
-      .delete(BaseURL + type, getHttpOptions())
+      .delete(BaseURL + type, await getHttpOptions())
       .then(responseJson => {
         resolve(responseJson);
       })
@@ -185,9 +185,9 @@ export const ApiDelete = (type, userData) => {
 };
 
 export const ApiPut = (type, userData) => {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     axios
-      .put(BaseURL + type, userData, getHttpOptions())
+      .put(BaseURL + type, userData, await getHttpOptions())
       .then(responseJson => {
         resolve(responseJson);
       })

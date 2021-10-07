@@ -6,5 +6,6 @@ const fb = require('./image/facebook_icon.png');
 const google = require('./image/google_icon.png');
 const c_sc_icon = require('./image/completesc_icon.png');
 const camera = require('./image/camera.png');
+const star = require('./image/star.png');
 
-export {bg, logo, eye, fb, google, eye_close, c_sc_icon, camera};
+export {bg, logo, eye, fb, google, eye_close, c_sc_icon, camera, star};

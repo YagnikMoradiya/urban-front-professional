@@ -6,6 +6,8 @@ import ProfileScreen from './MainScreens/ProfileScreen';
 import CompleteProfileScreen from './MainScreens/CompleteProfileScreen';
 import ChatScreen from './MainScreens/ChatScreen';
 import ConversationScreen from './MainScreens/ConversationScreen';
+import EmployeeScreen from './EmployeeScreens/EmployeeScreen';
+import ServiceScreen from './ServiceScreens/ServiceScreen';
 
 export {
   SignInScreen,
@@ -16,4 +18,6 @@ export {
   CompleteProfileScreen,
   ChatScreen,
   ConversationScreen,
+  EmployeeScreen,
+  ServiceScreen,
 };

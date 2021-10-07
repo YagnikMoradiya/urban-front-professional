@@ -200,8 +200,6 @@ const CompleteProfileScreen = ({navigation}) => {
         name: image.fileName,
       });
 
-      console.log(formdata);
-
       const employee = await ApiPost('/shop/add-employee', formdata);
 
       getTrakeOfDetail();

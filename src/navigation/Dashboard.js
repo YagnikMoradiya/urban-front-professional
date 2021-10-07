@@ -1,14 +1,17 @@
 import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {createDrawerNavigator} from '@react-navigation/drawer';
 import {
   ChatScreen,
   CompleteProfileScreen,
   ConversationScreen,
+  EmployeeScreen,
   HomeScreen,
   ProfileScreen,
+  ServiceScreen,
 } from '../screens';
 
-const DashboardStack = createNativeStackNavigator();
+const DashboardStack = createDrawerNavigator();
 
 const Dashboard = () => {
   return (
@@ -29,6 +32,10 @@ const Dashboard = () => {
         name="Conversation"
         component={ConversationScreen}
       />
+
+      <DashboardStack.Screen name="Employee" component={EmployeeScreen} />
+
+      <DashboardStack.Screen name="Service" component={ServiceScreen} />
     </DashboardStack.Navigator>
   );
 };

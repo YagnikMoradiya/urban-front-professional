@@ -8,9 +8,8 @@ import {COLORS} from '../utils/theme';
 const CustomListItem = ({data, navigation}) => {
   const [messages, setMessages] = useState([]);
   const {shop} = useSelector(state => state.shopData);
-  const {worker_id} = useSelector(state => state.workerData);
 
-  const friendsId = data.members.find(x => x !== worker_id);
+  const friendsId = data.members.find(x => x !== shop._id);
 
   const friendsData = {
     image: data[`${friendsId}_image`],
@@ -23,14 +22,13 @@ const CustomListItem = ({data, navigation}) => {
 
   return (
     <ListItem
-      //   key={id}
       bottomDivider={true}
       onPress={() =>
         navigation.navigate('Chat', {
           id: data._id,
           image: friendsData.image,
           chatName: friendsData.name,
-          worker_id,
+          friendsId,
         })
       }>
       <Avatar

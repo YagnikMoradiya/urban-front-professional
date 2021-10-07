@@ -11,31 +11,10 @@ import {
 import {CustomListItem} from '../../components';
 import {COLORS} from '../../utils/theme';
 import {ApiGet} from '../../utils/helper';
-import {useSelector} from 'react-redux';
 
-const chats = [
-  {
-    id: 1,
-    data: {
-      chatName: 'Krunal',
-      iconURL:
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRyVSEPJut2FtINpbexjlW-PxQjDqV_jspoSw&usqp=CAU',
-    },
-  },
-  {
-    id: 2,
-    data: {
-      chatName: 'Yash',
-      iconURL:
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRyVSEPJut2FtINpbexjlW-PxQjDqV_jspoSw&usqp=CAU',
-    },
-  },
-];
 const ConversationScreen = ({navigation}) => {
   const [chats, setChats] = useState([]);
   const [selectedChat, setSelectedChat] = useState(null);
-
-  const {worker_id} = useSelector(state => state.workerData);
 
   const signOut = () => {
     //
@@ -43,9 +22,7 @@ const ConversationScreen = ({navigation}) => {
 
   const getConversations = async () => {
     try {
-      const conversations = await ApiGet(
-        `/chat/get-conversation-worker/${worker_id}`,
-      );
+      const conversations = await ApiGet(`/chat/get-conversation`);
 
       setChats(conversations.data);
     } catch (error) {
@@ -55,12 +32,6 @@ const ConversationScreen = ({navigation}) => {
 
   useEffect(() => {
     getConversations();
-    // const unsubscribe = db()
-    //   .collection('chats')
-    //   .onSnapshot(snapshot =>
-    //     setChats(snapshot.docs.map(doc => ({id: doc.id, data: doc.data()}))),
-    //   );
-    // return unsubscribe;
   }, []);
 
   const enterChat = (id, chatName, iconURL) => {

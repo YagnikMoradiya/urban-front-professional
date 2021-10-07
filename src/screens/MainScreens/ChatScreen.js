@@ -12,19 +12,25 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
+import {io} from 'socket.io-client';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {Avatar} from 'react-native-elements';
 import {COLORS} from '../../utils/theme';
 import {ApiGet, ApiPost} from '../../utils/helper';
+import {useSelector} from 'react-redux';
 
 const ChatScreen = ({navigation, route}) => {
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([]);
+  const [arrivalMessage, setArrivalMessage] = useState(null);
 
+  const socket = useRef();
   const scrollViewRef = useRef();
 
-  const {chatName, id, image, worker_id} = route.params;
+  const {chatName, id, image, friendsId} = route.params;
+
+  const {shop} = useSelector(state => state.shopData);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -70,9 +76,16 @@ const ChatScreen = ({navigation, route}) => {
     try {
       const messageObj = {
         conversationId: id,
-        senderId: worker_id,
+        senderId: shop.id,
         text: input,
       };
+
+      socket.current.emit('sendMessage', {
+        senderId: shop.id,
+        receiverId: friendsId,
+        text: input,
+      });
+
       const message = await ApiPost('/chat/send-message', messageObj);
 
       setMessages([...messages, message.data]);
@@ -91,9 +104,34 @@ const ChatScreen = ({navigation, route}) => {
     }
   };
 
+  // useEffect(() => {
+  //   console.log(messages);
+  // }, [messages]);
+
+  useEffect(() => {
+    socket.current = io('http://localhost:5050/');
+    socket.current.on('getMessage', data => {
+      setArrivalMessage({
+        senderId: data.senderId,
+        text: data.text,
+        createdAt: Date.now(),
+      });
+    });
+  }, []);
+
+  useEffect(() => {
+    arrivalMessage &&
+      friendsId === arrivalMessage.senderId &&
+      setMessages(prev => [...prev, arrivalMessage]);
+  }, [arrivalMessage, id]);
+
+  useEffect(() => {
+    socket.current.emit('addUser', shop.id);
+  }, [shop]);
+
   useEffect(() => {
     getMessages();
-  }, []);
+  }, [id]);
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
@@ -111,7 +149,7 @@ const ChatScreen = ({navigation, route}) => {
                 scrollViewRef.current.scrollToEnd({animated: true})
               }>
               {messages.map(message => {
-                if (message?.senderId === worker_id) {
+                if (message?.senderId === shop.id) {
                   return (
                     <View style={styles.reciever} key={message._id}>
                       <Avatar
