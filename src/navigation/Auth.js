@@ -8,6 +8,7 @@ import {ApiGet, ApiGetNoAuth} from '../utils/helper';
 import {setShopData} from '../redux/action/shopAction';
 import Dashboard from './Dashboard';
 import {setWorker} from '../redux/action/workerAction';
+import ChatStack from './ChatStack';
 
 const Stack = createNativeStackNavigator();
 
@@ -51,6 +52,7 @@ const Auth = () => {
         {is_loggedin ? (
           <>
             <Stack.Screen name="DashBoard" component={Dashboard} />
+            <Stack.Screen name="ChatStack" component={ChatStack} />
           </>
         ) : (
           <>

@@ -10,28 +10,19 @@ import {
   ProfileScreen,
   ServiceScreen,
 } from '../screens';
+import ChatStack from './ChatStack';
 
 const DashboardStack = createDrawerNavigator();
 
 const Dashboard = () => {
   return (
     <DashboardStack.Navigator>
-      <DashboardStack.Screen
-        options={{headerShown: false}}
-        name="Home"
-        component={HomeScreen}
-      />
+      <DashboardStack.Screen name="Home" component={HomeScreen} />
       <DashboardStack.Screen
         name="CompleteProfile"
         component={CompleteProfileScreen}
       />
       <DashboardStack.Screen name="Profile" component={ProfileScreen} />
-
-      <DashboardStack.Screen name="Chat" component={ChatScreen} />
-      <DashboardStack.Screen
-        name="Conversation"
-        component={ConversationScreen}
-      />
 
       <DashboardStack.Screen name="Employee" component={EmployeeScreen} />
 
