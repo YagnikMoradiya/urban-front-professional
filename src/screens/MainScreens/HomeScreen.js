@@ -1,12 +1,11 @@
-import React, {useLayoutEffect, useState} from 'react';
+import React, {useEffect, useLayoutEffect, useState} from 'react';
 import {
   View,
   Text,
   StatusBar,
   StyleSheet,
-  Modal,
-  TouchableWithoutFeedback,
   TouchableOpacity,
+  TouchableHighlight,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -15,12 +14,28 @@ import {COLORS, FONTS, SIZES} from '../../utils/theme';
 import {removeShopData} from '../../redux/action/shopAction';
 import {removeDataObj, setDataObj} from '../../utils/storage.helper';
 import {useDispatch, useSelector} from 'react-redux';
-import {CustomInput, CustomButton} from '../../components';
+import {ApiGet, ApiPost} from '../../utils/helper';
+import {Tab, TabView} from 'react-native-elements';
 
 const HomeScreen = ({navigation}) => {
   const [workerId, setWorkerId] = useState('');
+  const [selected, setSelected] = useState('pending');
+  const [numbers, setNumbers] = useState({
+    pending: 1,
+    completed: 0,
+    cancelled: 0,
+  });
 
   const dispatch = useDispatch();
+
+  const getNumbers = async () => {
+    try {
+      const num = await ApiGet('/order/get-numbers');
+      setNumbers(num.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const logout = async () => {
     dispatch(removeShopData());
@@ -39,6 +54,10 @@ const HomeScreen = ({navigation}) => {
       console.error(error);
     }
   };
+
+  useEffect(() => {
+    getNumbers();
+  }, []);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -73,13 +92,52 @@ const HomeScreen = ({navigation}) => {
       {/* {!is_verified && completeProfileCard(navigation)} */}
 
       <View style={styles.card_container}>
-        <OrderStatusCard number={10} label="Pending" color="blue" />
-        <OrderStatusCard number={10} label="Completed" color="green" />
-        <OrderStatusCard number={10} label="Canceled" color="red" />
+        <OrderStatusCard
+          number={numbers.pending}
+          label="Pending"
+          color="blue"
+        />
+        <OrderStatusCard
+          number={numbers.completed}
+          label="Completed"
+          color="green"
+        />
+        <OrderStatusCard
+          number={numbers.cancelled}
+          label="Cancelled"
+          color="red"
+        />
       </View>
 
       <View style={{margin: 10, borderBottomWidth: 1}}>
         <Text style={{...FONTS.h3}}>Recent Orders</Text>
+      </View>
+
+      <View
+        style={{
+          height: 40,
+          flexDirection: 'row',
+          justifyContent: 'space-around',
+          alignItems: 'center',
+          margin: 10,
+        }}>
+        <OrderTypeTab
+          onPress={() => setSelected('pending')}
+          title="Pending"
+          selected={selected === 'pending' ? true : false}
+        />
+
+        <OrderTypeTab
+          onPress={() => setSelected('completed')}
+          title="Completed"
+          selected={selected === 'completed' ? true : false}
+        />
+
+        <OrderTypeTab
+          onPress={() => setSelected('cancelled')}
+          title="Cancelled"
+          selected={selected === 'cancelled' ? true : false}
+        />
       </View>
 
       {/* <Button title="LogOut" type="outline" onPress={logout} /> */}
@@ -97,6 +155,31 @@ const OrderStatusCard = ({number, label, color}) => {
         {label}
       </Text>
     </View>
+  );
+};
+
+const OrderTypeTab = ({title, onPress, selected}) => {
+  return (
+    <TouchableHighlight
+      onPress={onPress}
+      style={{
+        flex: 1,
+        height: '100%',
+        justifyContent: 'center',
+        borderWidth: 1,
+        borderRadius: 15,
+        margin: 3,
+        backgroundColor: selected === true ? COLORS.black : COLORS.white,
+      }}>
+      <Text
+        style={{
+          ...FONTS.body3,
+          textAlign: 'center',
+          color: selected === true ? COLORS.white : COLORS.black,
+        }}>
+        {title}
+      </Text>
+    </TouchableHighlight>
   );
 };
 
