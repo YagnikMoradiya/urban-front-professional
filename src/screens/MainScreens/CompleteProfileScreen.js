@@ -29,7 +29,12 @@ const TextInputCustom = ({placeholder, value, setValue, type}) => {
       }}>
       <TextInput
         placeholderTextColor={COLORS.gray}
-        style={{paddingBottom: 0, ...FONTS.body4, fontSize: 16}}
+        style={{
+          paddingBottom: 0,
+          ...FONTS.body3,
+          fontSize: 16,
+          color: COLORS.black,
+        }}
         placeholder={placeholder}
         value={value}
         onChangeText={t => setValue(t)}
@@ -210,28 +215,27 @@ const CompleteProfileScreen = ({navigation}) => {
 
   const addAddress = async () => {
     if (
-      shopName === '' ||
-      addressOne === '' ||
-      zipCode === '' ||
-      selectedState === '' ||
-      selectedCity === ''
-    )
-      return;
+      shopName !== '' ||
+      addressOne !== '' ||
+      zipCode !== '' ||
+      selectedState !== '' ||
+      selectedCity !== ''
+    ) {
+      try {
+        let addressData = {
+          name: shopName,
+          streetAddress: addressOne + ' ' + addressTwo,
+          city: selectedCity,
+          state: selectedState,
+          zipCode: zipCode,
+        };
 
-    try {
-      let addressData = {
-        name: shopName,
-        streetAddress: addressOne + ' ' + addressTwo,
-        zipCode,
-        state: selectedState,
-        city: selectedCity,
-      };
+        const address = await ApiPost('/shop/add-address', addressData);
 
-      const address = await ApiPost('/shop/add-address', addressData);
-
-      getTrakeOfDetail();
-    } catch (error) {
-      console.error(error);
+        getTrakeOfDetail();
+      } catch (error) {
+        console.error(error);
+      }
     }
   };
 
@@ -382,13 +386,13 @@ const CompleteProfileScreen = ({navigation}) => {
             setValue={setZipCode}
             placeholder="Zipcode"
           />
-          <View
+          {/* <View
             style={{
               borderBottomWidth: 1,
               borderBottomColor: COLORS.gray,
               margin: 15,
-            }}>
-            <Picker
+            }}> */}
+            {/* <Picker
               mode="dialog"
               selectedValue={selectedState}
               onValueChange={(itemValue, itemIndex) =>
@@ -402,16 +406,17 @@ const CompleteProfileScreen = ({navigation}) => {
                   key={c._id}
                 />
               ))}
-            </Picker>
-          </View>
+            </Picker> */}
+          {/* </View> */}
           {cities.length > 0 && (
             <View
-              style={{
-                borderBottomWidth: 1,
-                borderBottomColor: COLORS.gray,
-                margin: 15,
-              }}>
-              <Picker
+              // style={{
+              //   borderBottomWidth: 1,
+              //   borderBottomColor: COLORS.gray,
+              //   margin: 15,
+              // }}
+              >
+              {/* <Picker
                 mode="dialog"
                 selectedValue={selectedCity}
                 onValueChange={(itemValue, itemIndex) =>
@@ -425,7 +430,12 @@ const CompleteProfileScreen = ({navigation}) => {
                     key={c._id}
                   />
                 ))}
-              </Picker>
+              </Picker> */}
+              <TextInputCustom
+                value={selectedCity}
+                setValue={setSelectedCity}
+                placeholder="City"
+              />
             </View>
           )}
           <View style={{alignItems: 'center', justifyContent: 'center'}}>

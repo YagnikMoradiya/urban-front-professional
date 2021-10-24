@@ -8,6 +8,8 @@ import ChatScreen from './MainScreens/ChatScreen';
 import ConversationScreen from './MainScreens/ConversationScreen';
 import EmployeeScreen from './EmployeeScreens/EmployeeScreen';
 import ServiceScreen from './ServiceScreens/ServiceScreen';
+import ForgotPassword from './AuthScreens/ForgotPassword';
+import EditProfileScreen from './MainScreens/EditProfileScreen';
 
 export {
   SignInScreen,
@@ -20,4 +22,6 @@ export {
   ConversationScreen,
   EmployeeScreen,
   ServiceScreen,
+  ForgotPassword,
+  EditProfileScreen
 };

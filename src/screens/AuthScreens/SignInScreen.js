@@ -93,7 +93,7 @@ const SignInScreen = ({navigation}) => {
                 contentContainerStyle={{marginTop: 15}}
                 error={passwordError}
               />
-              <TouchableOpacity style={styles.forgot_container}>
+              <TouchableOpacity style={styles.forgot_container} onPress={() => navigation.navigate('ForgotPass')}>
                 <Text style={styles.forgot_text}>Forgot Password?</Text>
               </TouchableOpacity>
             </View>

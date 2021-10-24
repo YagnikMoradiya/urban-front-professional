@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {SignInScreen, SignUpScreen} from '../screens';
+import {SignInScreen, SignUpScreen, ForgotPassword} from '../screens';
 import {useSelector, useDispatch} from 'react-redux';
 import {getDataObj, setDataObj} from '../utils/storage.helper';
 import {ApiGet, ApiGetNoAuth} from '../utils/helper';
@@ -58,6 +58,7 @@ const Auth = () => {
           <>
             <Stack.Screen name="SignIn" component={SignInScreen} />
             <Stack.Screen name="SignUp" component={SignUpScreen} />
+            <Stack.Screen name='ForgotPass' component={ForgotPassword} />
           </>
         )}
       </Stack.Navigator>
