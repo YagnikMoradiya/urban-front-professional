@@ -1,5 +1,5 @@
-import React, {useEffect, useLayoutEffect, useState} from 'react';
-import {Picker} from '@react-native-picker/picker';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
+import { Picker } from '@react-native-picker/picker';
 import moment from 'moment';
 import Icon from 'react-native-vector-icons/Fontisto';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -13,13 +13,13 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {Avatar, Button, Divider} from 'react-native-elements';
-import {ApiGet, ApiGetNoAuth, ApiPost} from '../../utils/helper';
-import {COLORS, FONTS, SIZES} from '../../utils/theme';
-import {camera} from '../../assets';
-import {launchImageLibrary} from 'react-native-image-picker';
+import { Avatar, Button, Divider } from 'react-native-elements';
+import { ApiGet, ApiGetNoAuth, ApiPost } from '../../utils/helper';
+import { COLORS, FONTS, SIZES } from '../../utils/theme';
+import { camera } from '../../assets';
+import { launchImageLibrary } from 'react-native-image-picker';
 
-const TextInputCustom = ({placeholder, value, setValue, type}) => {
+const TextInputCustom = ({ placeholder, value, setValue, type }) => {
   return (
     <View
       style={{
@@ -43,7 +43,7 @@ const TextInputCustom = ({placeholder, value, setValue, type}) => {
   );
 };
 
-const SectionHeader = ({title}) => {
+const SectionHeader = ({ title }) => {
   return (
     <View
       style={{
@@ -63,7 +63,7 @@ const SectionHeader = ({title}) => {
   );
 };
 
-const CustomNextButton = ({onPress, title}) => {
+const CustomNextButton = ({ onPress, title }) => {
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -78,34 +78,34 @@ const CustomNextButton = ({onPress, title}) => {
         padding: SIZES.padding,
         paddingHorizontal: SIZES.padding4,
       }}>
-      <Text style={{color: COLORS.white, textAlign: 'center', ...FONTS.h4}}>
+      <Text style={{ color: COLORS.white, textAlign: 'center', ...FONTS.h4 }}>
         {title}
       </Text>
     </TouchableOpacity>
   );
 };
 
-const CompleteProfileScreen = ({navigation}) => {
-  const [selectedCategory, setSelectedCategory] = useState('');
-  const [openingShow, setOpeningShow] = useState(false);
-  const [closingShow, setClosingShow] = useState(false);
-  const [openingTime, setOpeningTime] = useState(new Date());
-  const [closingTime, setClosingTime] = useState(new Date());
-  const [name, setName] = useState('');
-  const [categories, setCategories] = useState([]);
-  const [shopName, setShopName] = useState('');
-  const [addressOne, setAddressOne] = useState('');
-  const [addressTwo, setAddressTwo] = useState('');
-  const [zipCode, setZipCode] = useState('');
-  const [states, setStates] = useState([]);
-  const [selectedState, setSelectedState] = useState('');
-  const [cities, setCities] = useState([]);
-  const [selectedCity, setSelectedCity] = useState('');
-  const [employeeName, setEmployeeName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [experience, setExperience] = useState('');
-  const [image, setImage] = useState('');
-  const [profileTrake, setProfileTrake] = useState({
+const CompleteProfileScreen = ({ navigation }) => {
+  const [ selectedCategory, setSelectedCategory ] = useState('');
+  const [ openingShow, setOpeningShow ] = useState(false);
+  const [ closingShow, setClosingShow ] = useState(false);
+  const [ openingTime, setOpeningTime ] = useState(new Date());
+  const [ closingTime, setClosingTime ] = useState(new Date());
+  const [ name, setName ] = useState('');
+  const [ categories, setCategories ] = useState([]);
+  const [ shopName, setShopName ] = useState('');
+  const [ addressOne, setAddressOne ] = useState('');
+  const [ addressTwo, setAddressTwo ] = useState('');
+  const [ zipCode, setZipCode ] = useState('');
+  const [ states, setStates ] = useState([]);
+  const [ selectedState, setSelectedState ] = useState('');
+  const [ cities, setCities ] = useState([]);
+  const [ selectedCity, setSelectedCity ] = useState('');
+  const [ employeeName, setEmployeeName ] = useState('');
+  const [ phone, setPhone ] = useState('');
+  const [ experience, setExperience ] = useState('');
+  const [ image, setImage ] = useState('');
+  const [ profileTrake, setProfileTrake ] = useState({
     generalDetail: false,
     addressDetail: false,
     employeeDetail: false,
@@ -167,8 +167,7 @@ const CompleteProfileScreen = ({navigation}) => {
       } else if (response.errorMessage) {
         console.log('Error Message: ', response.errorMessage);
       } else {
-        setImage(response.assets[0]);
-        console.log(response);
+        setImage(response.assets[ 0 ]);
       }
     });
   };
@@ -242,13 +241,13 @@ const CompleteProfileScreen = ({navigation}) => {
   useLayoutEffect(() => {
     navigation.setOptions({
       title: 'Complete Profile',
-      headerStyle: {backgroundColor: COLORS.gray2},
+      headerStyle: { backgroundColor: COLORS.gray2 },
       headerTitleStyle: {
         color: COLORS.black,
       },
       headerTintColor: COLORS.black,
     });
-  }, [navigation]);
+  }, [ navigation ]);
 
   useEffect(() => {
     getCategory();
@@ -260,7 +259,7 @@ const CompleteProfileScreen = ({navigation}) => {
     if (selectedState !== '') {
       getCity(selectedState);
     }
-  }, [selectedState]);
+  }, [ selectedState ]);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -321,13 +320,13 @@ const CompleteProfileScreen = ({navigation}) => {
                   onChange={onChangeOpening}
                 />
               )}
-              <View style={{alignItems: 'center'}}>
+              <View style={{ alignItems: 'center' }}>
                 <TouchableOpacity onPress={() => setOpeningShow(true)}>
-                  <Text style={{color: COLORS.black, ...FONTS.body4}}>
+                  <Text style={{ color: COLORS.black, ...FONTS.body4 }}>
                     {moment(openingTime).format('HH:mm')}
                   </Text>
                 </TouchableOpacity>
-                <Text style={{color: COLORS.gray, ...FONTS.body4}}>
+                <Text style={{ color: COLORS.gray, ...FONTS.body4 }}>
                   Opening Time
                 </Text>
               </View>
@@ -344,19 +343,19 @@ const CompleteProfileScreen = ({navigation}) => {
                   onChange={onChangeClosing}
                 />
               )}
-              <View style={{alignItems: 'center'}}>
+              <View style={{ alignItems: 'center' }}>
                 <TouchableOpacity onPress={() => setClosingShow(true)}>
-                  <Text style={{color: COLORS.black, ...FONTS.body4}}>
+                  <Text style={{ color: COLORS.black, ...FONTS.body4 }}>
                     {moment(closingTime).format('HH:mm')}
                   </Text>
                 </TouchableOpacity>
-                <Text style={{color: COLORS.gray, ...FONTS.body4}}>
+                <Text style={{ color: COLORS.gray, ...FONTS.body4 }}>
                   Closing Time
                 </Text>
               </View>
             </View>
           </View>
-          <View style={{alignItems: 'center', justifyContent: 'center'}}>
+          <View style={{ alignItems: 'center', justifyContent: 'center' }}>
             <CustomNextButton title="Add" />
           </View>
         </View>
@@ -392,7 +391,7 @@ const CompleteProfileScreen = ({navigation}) => {
               borderBottomColor: COLORS.gray,
               margin: 15,
             }}> */}
-            {/* <Picker
+          {/* <Picker
               mode="dialog"
               selectedValue={selectedState}
               onValueChange={(itemValue, itemIndex) =>
@@ -410,12 +409,12 @@ const CompleteProfileScreen = ({navigation}) => {
           {/* </View> */}
           {cities.length > 0 && (
             <View
-              // style={{
-              //   borderBottomWidth: 1,
-              //   borderBottomColor: COLORS.gray,
-              //   margin: 15,
-              // }}
-              >
+            // style={{
+            //   borderBottomWidth: 1,
+            //   borderBottomColor: COLORS.gray,
+            //   margin: 15,
+            // }}
+            >
               {/* <Picker
                 mode="dialog"
                 selectedValue={selectedCity}
@@ -438,7 +437,7 @@ const CompleteProfileScreen = ({navigation}) => {
               />
             </View>
           )}
-          <View style={{alignItems: 'center', justifyContent: 'center'}}>
+          <View style={{ alignItems: 'center', justifyContent: 'center' }}>
             <CustomNextButton title="Add" onPress={addAddress} />
           </View>
         </View>
@@ -456,7 +455,7 @@ const CompleteProfileScreen = ({navigation}) => {
             }}>
             <Avatar
               rounded
-              source={image.uri ? {uri: image.uri} : camera}
+              source={image.uri ? { uri: image.uri } : camera}
               size="large"
               onPress={chooseImage}
             />
@@ -479,7 +478,7 @@ const CompleteProfileScreen = ({navigation}) => {
             placeholder="Experience"
             type="decimal-pad"
           />
-          <View style={{alignItems: 'center', justifyContent: 'center'}}>
+          <View style={{ alignItems: 'center', justifyContent: 'center' }}>
             <CustomNextButton title="Add" onPress={addEmployee} />
           </View>
         </View>

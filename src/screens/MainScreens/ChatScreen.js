@@ -1,4 +1,4 @@
-import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
   Keyboard,
   KeyboardAvoidingView,
@@ -12,33 +12,43 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import {io} from 'socket.io-client';
+import { io } from 'socket.io-client';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {Avatar} from 'react-native-elements';
-import {COLORS} from '../../utils/theme';
-import {ApiGet, ApiPost} from '../../utils/helper';
-import {useSelector} from 'react-redux';
+import { Avatar } from 'react-native-elements';
+import { COLORS } from '../../utils/theme';
+import { ApiGet, ApiPost } from '../../utils/helper';
+import { useDispatch, useSelector } from 'react-redux';
+import { setMessages } from '../../redux/action/messageAction';
 
-const ChatScreen = ({navigation, route}) => {
-  const [input, setInput] = useState('');
-  const [messages, setMessages] = useState([]);
-  const [arrivalMessage, setArrivalMessage] = useState(null);
+const ChatScreen = ({ navigation, route }) => {
+  const [ input, setInput ] = useState('');
+  const [ messages, setMessages ] = useState([]);
+  const [ arrivalMessage, setArrivalMessage ] = useState(null);
+
+  // const { messages } = useSelector(state => state.messageData);
+
+  const dispatch = useDispatch();
+
 
   const socket = useRef();
   const scrollViewRef = useRef();
 
-  const {chatName, id, image, friendsId} = route.params;
+  const { chatName, id, image, friendsId } = route.params;
 
-  const {shop} = useSelector(state => state.shopData);
+  const { shop } = useSelector(state => state.shopData);
+
+  // useEffect(() => {
+  //   socket.current.emit('addUser', shop.id);
+  // }, [ shop ]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerStyle: {backgroundColor: COLORS.gray2},
+      headerStyle: { backgroundColor: COLORS.gray2 },
       headerTitleAlign: 'center',
-      headerTintColor: COLORS.black,
+      headerTinColor: COLORS.black,
       headerTitle: () => (
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Avatar
             rounded
             source={{
@@ -70,7 +80,7 @@ const ChatScreen = ({navigation, route}) => {
         </View>
       ),
     });
-  }, [navigation]);
+  }, [ navigation ]);
 
   const sendMessage = async () => {
     try {
@@ -88,7 +98,7 @@ const ChatScreen = ({navigation, route}) => {
 
       const message = await ApiPost('/chat/send-message', messageObj);
 
-      setMessages([...messages, message.data]);
+      setMessages([ ...messages, message.data ]);
       setInput('');
     } catch (error) {
       console.error(error);
@@ -99,14 +109,11 @@ const ChatScreen = ({navigation, route}) => {
     try {
       const messages = await ApiGet(`/chat/get-message/${id}`);
       setMessages(messages.data);
+      // dispatch(setMessages(messages.data))
     } catch (error) {
       console.error(error);
     }
   };
-
-  // useEffect(() => {
-  //   console.log(messages);
-  // }, [messages]);
 
   useEffect(() => {
     socket.current = io('http://localhost:5050/');
@@ -117,24 +124,20 @@ const ChatScreen = ({navigation, route}) => {
         createdAt: Date.now(),
       });
     });
-  }, []);
+  }, [ shop ]);
 
   useEffect(() => {
     arrivalMessage &&
       friendsId === arrivalMessage.senderId &&
-      setMessages(prev => [...prev, arrivalMessage]);
-  }, [arrivalMessage, id]);
-
-  useEffect(() => {
-    socket.current.emit('addUser', shop.id);
-  }, [shop]);
+      setMessages(prev => [ ...prev, arrivalMessage ]);
+  }, [ arrivalMessage, id ]);
 
   useEffect(() => {
     getMessages();
-  }, [id]);
+  }, [ id ]);
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
       <StatusBar backgroundColor={COLORS.gray2} barStyle="dark-content" />
       <KeyboardAvoidingView
         behavior="padding"
@@ -143,10 +146,10 @@ const ChatScreen = ({navigation, route}) => {
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <>
             <ScrollView
-              contentContainerStyle={{paddingTop: 15}}
+              contentContainerStyle={{ paddingTop: 15 }}
               ref={scrollViewRef}
               onContentSizeChange={() =>
-                scrollViewRef.current.scrollToEnd({animated: true})
+                scrollViewRef.current.scrollToEnd({ animated: true })
               }>
               {messages.map(message => {
                 if (message?.senderId === shop.id) {

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -9,38 +9,32 @@ import {
   StyleSheet,
   StatusBar,
 } from 'react-native';
-import {Overlay} from 'react-native-elements';
-import {bg, eye} from '../../assets';
-import {CustomButton, CustomInput} from '../../components';
-import {validateEmail, validatePassword} from '../../utils/error';
-import {ApiPostNoAuth} from '../../utils/helper';
-import {COLORS, FONTS, SIZES} from '../../utils/theme';
+import { Overlay } from 'react-native-elements';
+import { bg, eye } from '../../assets';
+import { CustomButton, CustomInput } from '../../components';
+import { validateEmail, validatePassword } from '../../utils/error';
+import { ApiPostNoAuth } from '../../utils/helper';
+import { COLORS, FONTS, SIZES } from '../../utils/theme';
 
-const ForgotPassword = ({navigation}) => {
-  const [visible, setVisible] = useState(false);
-  const [disabled, setDisabled] = useState(false);
-  const [email, setEmail] = useState('');
-  const [pass, setPass] = useState('');
-  const [confirmPass, setConfirmPass] = useState('');
-  const [otp, setOtp] = useState('');
+const ForgotPassword = ({ navigation }) => {
+  const [ visible, setVisible ] = useState(false);
+  const [ disabled, setDisabled ] = useState(false);
+  const [ email, setEmail ] = useState('');
+  const [ pass, setPass ] = useState('');
+  const [ confirmPass, setConfirmPass ] = useState('');
+  const [ otp, setOtp ] = useState('');
 
-  const [emailErr, setEmailErr] = useState('');
-  const [passErr, setPassErr] = useState('');
-  const [ConfirmPassErr, setConfirmPassErr] = useState('');
-
-  // useEffect(() => {
-  //   if (pass !== confirmPass){
-  //     setDisabled(true)
-  //   }
-  // }, [pass,confirmPass])
+  const [ emailErr, setEmailErr ] = useState('');
+  const [ passErr, setPassErr ] = useState('');
+  const [ ConfirmPassErr, setConfirmPassErr ] = useState('');
 
   const sendOTP = async () => {
     try {
-      const sendOTP = await ApiPostNoAuth('/user/send-otp', {
+      const sendOTP = await ApiPostNoAuth('/shop/send-otp', {
         email: email,
-      }).then(res => {
-        setVisible(true);
-      });
+      })
+      console.log(sendOTP);
+      setVisible(true);
     } catch (error) {
       console.error(error);
     }
@@ -48,23 +42,23 @@ const ForgotPassword = ({navigation}) => {
 
   const changePass = async () => {
     try {
-      const changePassword = await ApiPostNoAuth('/user/forgot-password', {
+      const changePassword = await ApiPostNoAuth('/shop/forgot-password', {
         email: email,
         password: pass,
         otp: otp,
-      }).then(res => {
-        setVisible(false);
-        navigation.navigate('SignIn');
-      });
+      })
+      setVisible(false);
+      navigation.navigate('SignIn');
+
     } catch (error) {
-        console.error(error);
+      console.error(error);
     }
   };
 
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={{flex: 1}}>
+      style={{ flex: 1 }}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <ImageBackground
           source={bg}
@@ -88,7 +82,7 @@ const ForgotPassword = ({navigation}) => {
                   setEmail(t);
                 }}
                 error={emailErr}
-                contentContainerStyle={{marginVertical: 10}}
+                contentContainerStyle={{ marginVertical: 10 }}
               />
 
               <CustomInput
@@ -101,7 +95,7 @@ const ForgotPassword = ({navigation}) => {
                   validatePassword(t, setPassErr);
                   setPass(t);
                 }}
-                contentContainerStyle={{marginVertical: 10}}
+                contentContainerStyle={{ marginVertical: 10 }}
                 error={passErr}
               />
 
@@ -115,7 +109,7 @@ const ForgotPassword = ({navigation}) => {
                   validatePassword(t, setConfirmPassErr);
                   setConfirmPass(t);
                 }}
-                contentContainerStyle={{marginVertical: 10}}
+                contentContainerStyle={{ marginVertical: 10 }}
                 error={ConfirmPassErr}
               />
             </View>
