@@ -1,9 +1,8 @@
-import React, {useEffect, useLayoutEffect, useState} from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import {
   FlatList,
   Image,
   Modal,
-  ScrollView,
   StatusBar,
   StyleSheet,
   Text,
@@ -11,30 +10,36 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import {COLORS, FONTS} from '../../utils/theme';
+import { COLORS, FONTS } from '../../utils/theme';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {ApiDelete, ApiGet, ApiPost, ApiPut} from '../../utils/helper';
-import {Avatar} from 'react-native-elements';
-import {camera, star} from '../../assets';
-import {CustomButton, CustomInput} from '../../components';
-import {launchImageLibrary} from 'react-native-image-picker';
+import { ApiDelete, ApiGet, ApiPost, ApiPut } from '../../utils/helper';
+import { Avatar } from 'react-native-elements';
+import { camera, star } from '../../assets';
+import { CustomButton, CustomInput } from '../../components';
+import { launchImageLibrary } from 'react-native-image-picker';
+import { useSelector } from 'react-redux';
+import { useIsFocused } from '@react-navigation/native';
 
-const ServiceScreen = ({navigation}) => {
-  const [services, setServices] = useState([]);
-  const [editOpen, setEditOpen] = useState(false);
-  const [newOpen, setNewOpen] = useState(false);
+const ServiceScreen = ({ navigation }) => {
+  const [ services, setServices ] = useState([]);
+  const [ editOpen, setEditOpen ] = useState(false);
+  const [ newOpen, setNewOpen ] = useState(false);
+
+  const isFocused = useIsFocused();
+
+  const { shop } = useSelector(state => state.shopData);
 
   const getServices = async () => {
     try {
-      const serData = await ApiGet(`/service`);
+      const serData = await ApiGet(`/service/${shop.id}`);
       setServices(serData.data);
     } catch (error) {
       console.error(error);
     }
   };
 
-  const ServiceCard = ({data}) => {
+  const ServiceCard = ({ data }) => {
     const deleteService = async id => {
       try {
         await ApiDelete(`/service/delete-service/${id}`);
@@ -49,13 +54,13 @@ const ServiceScreen = ({navigation}) => {
         <View style={styles.card_container}>
           <View style={styles.card_image_container}>
             <Avatar
-              containerStyle={{width: 100, height: 100}}
+              containerStyle={{ width: 100, height: 100 }}
               source={
                 data.avatar
-                  ? {uri: data.avatar}
+                  ? { uri: data.avatar }
                   : {
-                      uri: 'https://upload.wikimedia.org/wikipedia/commons/a/a0/Arh-avatar.jpg',
-                    }
+                    uri: 'https://upload.wikimedia.org/wikipedia/commons/a/a0/Arh-avatar.jpg',
+                  }
               }
             />
             <View style={styles.buttons_view}>
@@ -85,7 +90,7 @@ const ServiceScreen = ({navigation}) => {
                 }}>
                 {data.name}
               </Text>
-              <Text style={{...FONTS.body4}}>{data.price} ₨</Text>
+              <Text style={{ ...FONTS.body4 }}>{data.price} ₨</Text>
             </View>
             <View
               style={{
@@ -93,7 +98,7 @@ const ServiceScreen = ({navigation}) => {
                 justifyContent: 'space-between',
                 alignItems: 'center',
               }}>
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <Text
                   style={{
                     ...FONTS.body4,
@@ -103,16 +108,16 @@ const ServiceScreen = ({navigation}) => {
                 </Text>
                 <Image
                   source={star}
-                  style={{width: 15, resizeMode: 'contain'}}
+                  style={{ width: 15, resizeMode: 'contain' }}
                 />
               </View>
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <Ionicons name="alarm-outline" size={15} />
-                <Text style={{...FONTS.body4}}>{data.time} min</Text>
+                <Text style={{ ...FONTS.body4 }}>{data.time} min</Text>
               </View>
             </View>
-            <View style={{flexDirection: 'row'}}>
-              <Text style={{flex: 1, flexWrap: 'wrap'}}>
+            <View style={{ flexDirection: 'row' }}>
+              <Text style={{ flex: 1, flexWrap: 'wrap' }}>
                 {data.description}
               </Text>
             </View>
@@ -123,12 +128,12 @@ const ServiceScreen = ({navigation}) => {
     );
   };
 
-  const EditServiceCard = ({data}) => {
-    const [name, setName] = useState(data.name);
-    const [price, setPrice] = useState(data.price.toString());
-    const [time, setTime] = useState(data.time.toString());
-    const [description, setDescription] = useState(data.description);
-    const [image, setImage] = useState({uri: ''});
+  const EditServiceCard = ({ data }) => {
+    const [ name, setName ] = useState(data.name);
+    const [ price, setPrice ] = useState(data.price.toString());
+    const [ time, setTime ] = useState(data.time.toString());
+    const [ description, setDescription ] = useState(data.description);
+    const [ image, setImage ] = useState({ uri: '' });
 
     const chooseImage = () => {
       let options = {
@@ -146,7 +151,7 @@ const ServiceScreen = ({navigation}) => {
         } else if (response.errorMessage) {
           console.log('Error Message: ', response.errorMessage);
         } else {
-          setImage(response.assets[0]);
+          setImage(response.assets[ 0 ]);
         }
       });
     };
@@ -193,32 +198,32 @@ const ServiceScreen = ({navigation}) => {
                 padding: 10,
                 borderRadius: 30,
               }}>
-              <Text style={{textAlign: 'center', ...FONTS.h3}}>
+              <Text style={{ textAlign: 'center', ...FONTS.h3 }}>
                 Edit Employee
               </Text>
-              <View style={{marginTop: 30, marginBottom: 10}}>
-                <View style={{alignItems: 'center'}}>
+              <View style={{ marginTop: 30, marginBottom: 10 }}>
+                <View style={{ alignItems: 'center' }}>
                   <Avatar
                     rounded
                     source={
                       data.avatar
-                        ? {uri: data.avatar}
+                        ? { uri: data.avatar }
                         : image.uri
-                        ? {uri: image.uri}
-                        : camera
+                          ? { uri: image.uri }
+                          : camera
                     }
                     size="large"
                     onPress={chooseImage}
                   />
                 </View>
-                <View style={{marginVertical: 5}}>
+                <View style={{ marginVertical: 5 }}>
                   <CustomInput
                     placeholder="service name"
                     value={name}
                     setValue={setName}
                   />
                 </View>
-                <View style={{marginVertical: 5}}>
+                <View style={{ marginVertical: 5 }}>
                   <CustomInput
                     placeholder="price"
                     value={price}
@@ -226,7 +231,7 @@ const ServiceScreen = ({navigation}) => {
                     type="decimal-pad"
                   />
                 </View>
-                <View style={{marginVertical: 5}}>
+                <View style={{ marginVertical: 5 }}>
                   <CustomInput
                     placeholder="time"
                     value={time}
@@ -234,7 +239,7 @@ const ServiceScreen = ({navigation}) => {
                     type="decimal-pad"
                   />
                 </View>
-                <View style={{marginVertical: 5}}>
+                <View style={{ marginVertical: 5 }}>
                   <CustomInput
                     placeholder="description"
                     value={description}
@@ -242,7 +247,7 @@ const ServiceScreen = ({navigation}) => {
                   />
                 </View>
               </View>
-              <View style={{alignItems: 'center', padding: 10, margin: 10}}>
+              <View style={{ alignItems: 'center', padding: 10, margin: 10 }}>
                 <CustomButton
                   title="OK"
                   onPress={() => editService(data._id)}
@@ -256,11 +261,11 @@ const ServiceScreen = ({navigation}) => {
   };
 
   const NewServiceCard = () => {
-    const [name, setName] = useState('');
-    const [price, setPrice] = useState('');
-    const [time, setTime] = useState('');
-    const [description, setDescription] = useState('');
-    const [image, setImage] = useState({uri: ''});
+    const [ name, setName ] = useState('');
+    const [ price, setPrice ] = useState('');
+    const [ time, setTime ] = useState('');
+    const [ description, setDescription ] = useState('');
+    const [ image, setImage ] = useState({ uri: '' });
 
     const chooseImage = () => {
       let options = {
@@ -278,7 +283,7 @@ const ServiceScreen = ({navigation}) => {
         } else if (response.errorMessage) {
           console.log('Error Message: ', response.errorMessage);
         } else {
-          setImage(response.assets[0]);
+          setImage(response.assets[ 0 ]);
         }
       });
     };
@@ -325,26 +330,26 @@ const ServiceScreen = ({navigation}) => {
                 padding: 10,
                 borderRadius: 30,
               }}>
-              <Text style={{textAlign: 'center', ...FONTS.h3}}>
+              <Text style={{ textAlign: 'center', ...FONTS.h3 }}>
                 New Service
               </Text>
-              <View style={{marginTop: 30, marginBottom: 10}}>
-                <View style={{alignItems: 'center'}}>
+              <View style={{ marginTop: 30, marginBottom: 10 }}>
+                <View style={{ alignItems: 'center' }}>
                   <Avatar
                     rounded
-                    source={image.uri ? {uri: image.uri} : camera}
+                    source={image.uri ? { uri: image.uri } : camera}
                     size="large"
                     onPress={chooseImage}
                   />
                 </View>
-                <View style={{marginVertical: 5}}>
+                <View style={{ marginVertical: 5 }}>
                   <CustomInput
                     placeholder="service name"
                     value={name}
                     setValue={setName}
                   />
                 </View>
-                <View style={{marginVertical: 5}}>
+                <View style={{ marginVertical: 5 }}>
                   <CustomInput
                     placeholder="price (in rupee)"
                     value={price}
@@ -352,7 +357,7 @@ const ServiceScreen = ({navigation}) => {
                     type="decimal-pad"
                   />
                 </View>
-                <View style={{marginVertical: 5}}>
+                <View style={{ marginVertical: 5 }}>
                   <CustomInput
                     placeholder="time (in minute)"
                     value={time}
@@ -360,7 +365,7 @@ const ServiceScreen = ({navigation}) => {
                     type="decimal-pad"
                   />
                 </View>
-                <View style={{marginVertical: 5}}>
+                <View style={{ marginVertical: 5 }}>
                   <CustomInput
                     placeholder="description"
                     value={description}
@@ -368,7 +373,7 @@ const ServiceScreen = ({navigation}) => {
                   />
                 </View>
               </View>
-              <View style={{alignItems: 'center', padding: 10, margin: 10}}>
+              <View style={{ alignItems: 'center', padding: 10, margin: 10 }}>
                 <CustomButton title="OK" onPress={createService} />
               </View>
             </View>
@@ -380,7 +385,7 @@ const ServiceScreen = ({navigation}) => {
 
   useEffect(() => {
     getServices();
-  }, []);
+  }, [ isFocused ]);
 
   // useEffect(() => {
   //   console.log('services', services);
@@ -389,11 +394,11 @@ const ServiceScreen = ({navigation}) => {
   useLayoutEffect(() => {
     navigation.setOptions({
       title: 'Services',
-      headerStyle: {backgroundColor: COLORS.gray2},
+      headerStyle: { backgroundColor: COLORS.gray2 },
       headerTitleAlign: 'center',
       headerTintColor: COLORS.black,
       headerTitle: () => (
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Text
             style={{
               ...FONTS.h2,
@@ -406,13 +411,13 @@ const ServiceScreen = ({navigation}) => {
       ),
       headerRight: () => (
         <TouchableOpacity
-          style={{padding: 5, marginRight: 15}}
+          style={{ padding: 5, marginRight: 15 }}
           onPress={() => setNewOpen(true)}>
           <AntDesign name="plus" size={25} color={COLORS.black} />
         </TouchableOpacity>
       ),
     });
-  }, [navigation]);
+  }, [ navigation ]);
 
   return (
     <View style={styles.container} showsVerticalScrollIndicator={false}>
@@ -421,7 +426,7 @@ const ServiceScreen = ({navigation}) => {
         <FlatList
           data={services}
           keyExtractor={(item, index) => `${item._id}`}
-          renderItem={({item, index}) => <ServiceCard data={item} />}
+          renderItem={({ item, index }) => <ServiceCard data={item} />}
         />
       ) : (
         <View style={styles.no_content_view}>

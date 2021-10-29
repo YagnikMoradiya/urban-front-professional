@@ -4,6 +4,7 @@ import TimePicker from './TimePicker';
 import CustomNextButton from './CustomNextButton';
 import CustomAvatar from './CustomAvatar';
 import CustomListItem from './CustomListItem';
+import Order from './Order';
 
 export {
   CustomListItem,
@@ -12,4 +13,5 @@ export {
   TimePicker,
   CustomNextButton,
   CustomAvatar,
+  Order
 };

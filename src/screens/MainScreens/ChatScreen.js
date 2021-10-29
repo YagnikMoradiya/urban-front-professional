@@ -12,35 +12,80 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import { io } from 'socket.io-client';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Avatar } from 'react-native-elements';
 import { COLORS } from '../../utils/theme';
 import { ApiGet, ApiPost } from '../../utils/helper';
-import { useDispatch, useSelector } from 'react-redux';
-import { setMessages } from '../../redux/action/messageAction';
+import { useSelector } from 'react-redux';
+import 'react-native-get-random-values';
+import { v4 as uuidv4 } from 'uuid';
 
 const ChatScreen = ({ navigation, route }) => {
   const [ input, setInput ] = useState('');
   const [ messages, setMessages ] = useState([]);
   const [ arrivalMessage, setArrivalMessage ] = useState(null);
 
-  // const { messages } = useSelector(state => state.messageData);
-
-  const dispatch = useDispatch();
-
-
-  const socket = useRef();
   const scrollViewRef = useRef();
 
   const { chatName, id, image, friendsId } = route.params;
 
   const { shop } = useSelector(state => state.shopData);
 
-  // useEffect(() => {
-  //   socket.current.emit('addUser', shop.id);
-  // }, [ shop ]);
+  const { socket } = useSelector(state => state.socketData);
+
+  useEffect(() => {
+    socket.current.on('getMessage', data => {
+      setArrivalMessage({
+        _id: uuidv4(),
+        senderId: data.senderId,
+        text: data.text,
+        createdAt: Date.now(),
+      });
+    });
+  }, [ shop ]);
+
+  useEffect(() => {
+    arrivalMessage &&
+      friendsId === arrivalMessage.senderId &&
+      setMessages(prev => [ ...prev, arrivalMessage ]);
+  }, [ arrivalMessage, id ]);
+
+  const sendMessage = async () => {
+    try {
+      const messageObj = {
+        conversationId: id,
+        senderId: shop.id,
+        text: input,
+      };
+
+      socket.current.emit('sendMessage', {
+        senderId: shop.id,
+        receiverId: friendsId,
+        text: input,
+      });
+
+      const message = await ApiPost('/chat/send-message', messageObj);
+
+      setMessages([ ...messages, message.data ]);
+      setInput('');
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getMessages = async () => {
+    try {
+      const messages = await ApiGet(`/chat/get-message/${id}`);
+      setMessages(messages.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    getMessages();
+  }, [ id ]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -81,60 +126,6 @@ const ChatScreen = ({ navigation, route }) => {
       ),
     });
   }, [ navigation ]);
-
-  const sendMessage = async () => {
-    try {
-      const messageObj = {
-        conversationId: id,
-        senderId: shop.id,
-        text: input,
-      };
-
-      socket.current.emit('sendMessage', {
-        senderId: shop.id,
-        receiverId: friendsId,
-        text: input,
-      });
-
-      const message = await ApiPost('/chat/send-message', messageObj);
-
-      setMessages([ ...messages, message.data ]);
-      setInput('');
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const getMessages = async () => {
-    try {
-      const messages = await ApiGet(`/chat/get-message/${id}`);
-      setMessages(messages.data);
-      // dispatch(setMessages(messages.data))
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  useEffect(() => {
-    socket.current = io('http://localhost:5050/');
-    socket.current.on('getMessage', data => {
-      setArrivalMessage({
-        senderId: data.senderId,
-        text: data.text,
-        createdAt: Date.now(),
-      });
-    });
-  }, [ shop ]);
-
-  useEffect(() => {
-    arrivalMessage &&
-      friendsId === arrivalMessage.senderId &&
-      setMessages(prev => [ ...prev, arrivalMessage ]);
-  }, [ arrivalMessage, id ]);
-
-  useEffect(() => {
-    getMessages();
-  }, [ id ]);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>

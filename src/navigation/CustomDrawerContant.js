@@ -88,15 +88,15 @@ function CustomDrawerContant(props) {
 
         <DrawerItem
           labelStyle={styles.listText}
-          label="Edit Profile"
+          label="Requests"
           icon={({ size, color }) => (
-            <MaterialCommunityIcons
-              name="account-edit-outline"
+            <MaterialIcons
+              name="star-border"
               size={size}
               color={color}
             />
           )}
-          onPress={() => props.navigation.navigate('EditProfile')}
+          onPress={() => props.navigation.navigate('Request')}
         />
       </DrawerContentScrollView>
 

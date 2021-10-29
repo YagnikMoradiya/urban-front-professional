@@ -1,4 +1,4 @@
-import React, {useEffect, useLayoutEffect, useState} from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -6,27 +6,55 @@ import {
   StyleSheet,
   TouchableOpacity,
   TouchableHighlight,
+  ScrollView,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {Button} from 'react-native-elements/dist/buttons/Button';
-import {COLORS, FONTS, SIZES} from '../../utils/theme';
-import {removeShopData} from '../../redux/action/shopAction';
-import {removeDataObj, setDataObj} from '../../utils/storage.helper';
-import {useDispatch, useSelector} from 'react-redux';
-import {ApiGet, ApiPost} from '../../utils/helper';
-import {Tab, TabView} from 'react-native-elements';
+import { Button } from 'react-native-elements/dist/buttons/Button';
+import { COLORS, FONTS, SIZES } from '../../utils/theme';
+import { removeShopData } from '../../redux/action/shopAction';
+import { removeDataObj, setDataObj } from '../../utils/storage.helper';
+import { useDispatch, useSelector } from 'react-redux';
+import { ApiGet, ApiPost } from '../../utils/helper';
+import { Order } from '../../components';
+import { useIsFocused } from '@react-navigation/native';
 
-const HomeScreen = ({navigation}) => {
-  const [workerId, setWorkerId] = useState('');
-  const [selected, setSelected] = useState('pending');
-  const [numbers, setNumbers] = useState({
-    pending: 1,
+const data = [
+  {
+    id: 1,
+    name: 'Akash Zalavadiya',
+    phone: '+91 8785235645',
+    service: 'Hair Cut',
+    status: 'Pending'
+  },
+
+  {
+    id: 2,
+    name: 'Krunal Mungalpara',
+    phone: '+91 8785235645',
+    service: 'Nal Fitting',
+    status: 'Completed'
+  },
+
+  {
+    id: 3,
+    name: 'Yash Rudani',
+    phone: '+91 8785235645',
+    service: 'Hair Color',
+    status: 'Cancelled'
+  }
+]
+
+const HomeScreen = ({ navigation }) => {
+  const [ workerId, setWorkerId ] = useState('');
+  const [ selected, setSelected ] = useState('pending');
+  const [ numbers, setNumbers ] = useState({
+    pending: 0,
     completed: 0,
     cancelled: 0,
   });
 
-  const dispatch = useDispatch();
+  const isFocused = useIsFocused();
+  const [ orders, setOrders ] = useState([]);
 
   const getNumbers = async () => {
     try {
@@ -37,19 +65,10 @@ const HomeScreen = ({navigation}) => {
     }
   };
 
-  const logout = async () => {
-    dispatch(removeShopData());
-    await removeDataObj('token');
-  };
-
-  const storeWorkerId = async () => {
+  const getOrders = async (s) => {
     try {
-      if (!workerId) return;
-      await setDataObj(workerId, 'workerId');
-      dispatch(setWorkerId(workerId));
-
-      setOpen(false);
-      navigation.navigate('Conversation');
+      const num = await ApiGet(`/order/get-order-shop?type=${s}`);
+      setOrders(num.data);
     } catch (error) {
       console.error(error);
     }
@@ -57,12 +76,13 @@ const HomeScreen = ({navigation}) => {
 
   useEffect(() => {
     getNumbers();
-  }, []);
+    getOrders('pending');
+  }, [ isFocused ]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
       title: 'Home',
-      headerStyle: {backgroundColor: COLORS.gray2},
+      headerStyle: { backgroundColor: COLORS.gray2 },
       headerTitleAlign: 'center',
       headerTitleStyle: {
         color: COLORS.black,
@@ -77,14 +97,14 @@ const HomeScreen = ({navigation}) => {
             width: 100,
           }}>
           <TouchableOpacity
-            style={{padding: 3}}
+            style={{ padding: 3 }}
             onPress={() => navigation.navigate('ChatStack')}>
             <AntDesign name="message1" size={24} />
           </TouchableOpacity>
         </View>
       ),
     });
-  }, [navigation]);
+  }, [ navigation ]);
 
   return (
     <View style={styles.container}>
@@ -109,8 +129,8 @@ const HomeScreen = ({navigation}) => {
         />
       </View>
 
-      <View style={{margin: 10, borderBottomWidth: 1}}>
-        <Text style={{...FONTS.h3}}>Recent Orders</Text>
+      <View style={{ margin: 10, borderBottomWidth: 1 }}>
+        <Text style={{ ...FONTS.h3 }}>Recent Orders</Text>
       </View>
 
       <View
@@ -122,43 +142,49 @@ const HomeScreen = ({navigation}) => {
           margin: 10,
         }}>
         <OrderTypeTab
-          onPress={() => setSelected('pending')}
+          onPress={() => { setSelected('pending'); getOrders('pending') }}
           title="Pending"
           selected={selected === 'pending' ? true : false}
         />
 
         <OrderTypeTab
-          onPress={() => setSelected('completed')}
+          onPress={() => { setSelected('completed'); getOrders('completed') }}
           title="Completed"
           selected={selected === 'completed' ? true : false}
         />
 
         <OrderTypeTab
-          onPress={() => setSelected('cancelled')}
+          onPress={() => { setSelected('cancelled'); getOrders('cancelled') }}
           title="Cancelled"
           selected={selected === 'cancelled' ? true : false}
         />
       </View>
+
+      <ScrollView contentContainerStyle={{ flexGrow: 1, alignItems: 'center' }}>
+        {orders.map(d => (
+          <Order data={d} key={d.id} />
+        ))}
+      </ScrollView>
 
       {/* <Button title="LogOut" type="outline" onPress={logout} /> */}
     </View>
   );
 };
 
-const OrderStatusCard = ({number, label, color}) => {
+const OrderStatusCard = ({ number, label, color }) => {
   return (
     <View>
-      <Text style={{textAlign: 'center', ...FONTS.body3, color: color}}>
+      <Text style={{ textAlign: 'center', ...FONTS.body3, color: color }}>
         {number}
       </Text>
-      <Text style={{textAlign: 'center', ...FONTS.body3, color: color}}>
+      <Text style={{ textAlign: 'center', ...FONTS.body3, color: color }}>
         {label}
       </Text>
     </View>
   );
 };
 
-const OrderTypeTab = ({title, onPress, selected}) => {
+const OrderTypeTab = ({ title, onPress, selected }) => {
   return (
     <TouchableHighlight
       onPress={onPress}

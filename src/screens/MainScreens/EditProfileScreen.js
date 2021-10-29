@@ -1,22 +1,44 @@
-import React, { useLayoutEffect, useState } from 'react'
+import React, { useLayoutEffect, useEffect, useState } from 'react'
 import { View, Text, StyleSheet, StatusBar, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, TextInput, TouchableOpacity, ScrollView } from 'react-native'
 import { Avatar } from 'react-native-elements/dist/avatar/Avatar';
 import { COLORS, FONTS } from '../../utils/theme';
 import { launchImageLibrary } from 'react-native-image-picker';
-import { useSelector } from 'react-redux';
 import { camera } from '../../assets';
+import { ApiGet, ApiPost, ApiPut } from '../../utils/helper';
 
-const EditProfileScreen = ({ navigation }) => {
 
-  const { shop } = useSelector(state => state.shopData)
-
+const EditProfileScreen = ({ navigation, route }) => {
   const [ image, setImage ] = useState({ uri: '' });
-  const [ name, setName ] = useState('');
-  const [ mobile, setMobile ] = useState('');
-  const [ state, setState ] = useState('');
-  const [ city, setCity ] = useState('');
-  const [ zipCode, setzipCode ] = useState('');
-  const [ street, setStreet ] = useState('');
+  const [ avatar, setAvatar ] = useState(route.params.avatar)
+  const [ name, setName ] = useState(route.params.name);
+  const [ mobile, setMobile ] = useState(route.params.phone);
+  const [ state, setState ] = useState(route.params.state);
+  const [ city, setCity ] = useState(route.params.city);
+
+  const update = async () => {
+    try {
+      const formdata = new FormData();
+
+      formdata.append('name', name);
+      formdata.append('phone', mobile);
+      formdata.append('state', state);
+      formdata.append('city', city);
+
+      if (image.uri != '') {
+        formdata.append('avatar', {
+          uri: image.uri,
+          type: image.type,
+          name: image.fileName,
+        });
+      }
+
+      const shop = await ApiPut('/shop/edit', formdata);
+
+      navigation.navigate('Profile')
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   const input = (
     placeholder,
@@ -75,34 +97,29 @@ const EditProfileScreen = ({ navigation }) => {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={{ flex: 1 }}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <ScrollView contentContainerStyle={styles.container}>
+        <View style={styles.container}>
           <StatusBar backgroundColor={COLORS.gray2} barStyle="dark-content" />
-
 
           <View style={styles.avatar_container}>
             <Avatar
-              avatarStyle={styles.avatar}
               size="xlarge"
               rounded
-              source={image.uri ? { uri: image.uri } : shop?.avatar ? shop?.avatar : camera}
+              source={image.uri ? { uri: image.uri } : avatar ? { uri: avatar } : camera}
               onPress={selectImage}
             />
           </View>
 
           <View style={styles.options_container}>
-            {input('Email', text => setName(text), false, name, 'default')}
+            {input('Name', text => setName(text), false, name, 'default')}
             {input('Mobile Number', text => setMobile(text), false, mobile, 'numeric')}
-            {input('Street/Apartment', text => setStreet(text), false, street, 'default')}
             {input('City', text => setCity(text), false, city, 'default')}
             {input('State', text => setState(text), false, state, 'default')}
-            {input('Pin Code', text => setzipCode(text), false, zipCode, 'default')}
 
-            <TouchableOpacity style={styles.save_container}>
+            <TouchableOpacity style={styles.save_container} onPress={update} >
               <Text style={styles.save_txt}>Save</Text>
             </TouchableOpacity>
           </View>
-          <View style={{ height: 500 }} />
-        </ScrollView>
+        </View>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   );
@@ -116,22 +133,18 @@ const styles = StyleSheet.create({
   },
 
   avatar_container: {
-    // flex: 0.3,
-    flexDirection: 'column',
+    paddingVertical: 50,
     justifyContent: 'center',
     alignItems: 'center',
   },
 
-  avatar: {},
-
   options_container: {
-    flexGrow: 1,
+    flex: 1,
     flexDirection: 'column',
     paddingHorizontal: 40,
   },
 
   input_container: {
-    // backgroundColor: ,
     borderWidth: 1,
     borderColor: COLORS.black,
     borderRadius: 10,
@@ -145,7 +158,7 @@ const styles = StyleSheet.create({
   },
 
   input: {
-    flex: 1,
+    width: '100%',
     ...FONTS.body3,
     fontFamily: 'Roboto-Light',
     color: COLORS.black,
@@ -170,4 +183,5 @@ const styles = StyleSheet.create({
     fontWeight: '300',
   },
 });
+
 export default EditProfileScreen

@@ -1,4 +1,4 @@
-import React, {useEffect, useLayoutEffect, useState} from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -9,19 +9,21 @@ import {
   Modal,
   TouchableWithoutFeedback,
 } from 'react-native';
-import {Avatar} from 'react-native-elements/dist/avatar/Avatar';
-import {COLORS, FONTS} from '../../utils/theme';
+import { Avatar } from 'react-native-elements/dist/avatar/Avatar';
+import { COLORS, FONTS } from '../../utils/theme';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {ApiDelete, ApiGet, ApiPost, ApiPut} from '../../utils/helper';
-import {CustomButton, CustomInput} from '../../components';
+import { ApiDelete, ApiGet, ApiPost, ApiPut } from '../../utils/helper';
+import { CustomButton, CustomInput } from '../../components';
+import { useIsFocused } from '@react-navigation/native';
 
-const EmployeeScreen = ({navigation}) => {
-  const [employees, setEmployees] = useState([]);
-  const [open, setOpen] = useState(false);
-  const [openNew, setOpenNew] = useState(false);
+const EmployeeScreen = ({ navigation }) => {
+  const [ employees, setEmployees ] = useState([]);
+  const [ open, setOpen ] = useState(false);
+  const [ openNew, setOpenNew ] = useState(false);
   // const [name, setName] = useState('');
   // const [experience, setExperience] = useState(0);
   // const [phone, setPhone] = useState('+91');
+  const isFocused = useIsFocused();
 
   const getEmployees = async () => {
     try {
@@ -43,16 +45,16 @@ const EmployeeScreen = ({navigation}) => {
 
   useEffect(() => {
     getEmployees();
-  }, []);
+  }, [ isFocused ]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
       title: 'Employees',
-      headerStyle: {backgroundColor: COLORS.gray2},
+      headerStyle: { backgroundColor: COLORS.gray2 },
       headerTitleAlign: 'center',
       headerTintColor: COLORS.black,
       headerTitle: () => (
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Text
             style={{
               ...FONTS.h2,
@@ -65,15 +67,15 @@ const EmployeeScreen = ({navigation}) => {
       ),
       headerRight: () => (
         <TouchableOpacity
-          style={{padding: 5, marginRight: 15}}
+          style={{ padding: 5, marginRight: 15 }}
           onPress={() => setOpenNew(true)}>
           <AntDesign name="plus" size={25} color={COLORS.black} />
         </TouchableOpacity>
       ),
     });
-  }, [navigation]);
+  }, [ navigation ]);
 
-  const EmployeeCard = ({data}) => {
+  const EmployeeCard = ({ data }) => {
     return (
       <>
         <View style={styles.card_container}>
@@ -88,8 +90,8 @@ const EmployeeScreen = ({navigation}) => {
           </View>
 
           <View style={styles.card_container_right}>
-            <View style={{flexDirection: 'row'}}>
-              <Text style={[styles.card_text, {flex: 1, flexWrap: 'wrap'}]}>
+            <View style={{ flexDirection: 'row' }}>
+              <Text style={[ styles.card_text, { flex: 1, flexWrap: 'wrap' } ]}>
                 Name: {data.name}
               </Text>
             </View>
@@ -113,10 +115,10 @@ const EmployeeScreen = ({navigation}) => {
     );
   };
 
-  const DetailCard = ({data}) => {
-    const [name, setName] = useState(data.name);
-    const [experience, setExperience] = useState(data.experience.toString());
-    const [phone, setPhone] = useState(data.phone);
+  const DetailCard = ({ data }) => {
+    const [ name, setName ] = useState(data.name);
+    const [ experience, setExperience ] = useState(data.experience.toString());
+    const [ phone, setPhone ] = useState(data.phone);
 
     const editEmployee = async id => {
       try {
@@ -125,7 +127,7 @@ const EmployeeScreen = ({navigation}) => {
         if (phone && phone.length > 0) var p = phone.split(' ');
 
         formdata.append('name', name);
-        formdata.append('phone', '+91 ' + p[p.length - 1]);
+        formdata.append('phone', '+91 ' + p[ p.length - 1 ]);
         formdata.append('experience', experience);
         // formdata.append('avatar', {
         //   uri: image.uri,
@@ -159,18 +161,18 @@ const EmployeeScreen = ({navigation}) => {
                 padding: 10,
                 borderRadius: 30,
               }}>
-              <Text style={{textAlign: 'center', ...FONTS.h3}}>
+              <Text style={{ textAlign: 'center', ...FONTS.h3 }}>
                 Edit Employee
               </Text>
-              <View style={{marginTop: 30, marginBottom: 10}}>
-                <View style={{marginVertical: 5}}>
+              <View style={{ marginTop: 30, marginBottom: 10 }}>
+                <View style={{ marginVertical: 5 }}>
                   <CustomInput
                     placeholder="Name"
                     value={name}
                     setValue={setName}
                   />
                 </View>
-                <View style={{marginVertical: 5}}>
+                <View style={{ marginVertical: 5 }}>
                   <CustomInput
                     placeholder="Experience"
                     value={experience}
@@ -178,7 +180,7 @@ const EmployeeScreen = ({navigation}) => {
                     type="decimal-pad"
                   />
                 </View>
-                <View style={{marginVertical: 5}}>
+                <View style={{ marginVertical: 5 }}>
                   <CustomInput
                     placeholder="phone"
                     value={phone}
@@ -187,7 +189,7 @@ const EmployeeScreen = ({navigation}) => {
                   />
                 </View>
               </View>
-              <View style={{alignItems: 'center', padding: 10, margin: 10}}>
+              <View style={{ alignItems: 'center', padding: 10, margin: 10 }}>
                 <CustomButton
                   title="OK"
                   onPress={() => editEmployee(data._id)}
@@ -201,9 +203,9 @@ const EmployeeScreen = ({navigation}) => {
   };
 
   const NewEmployeeCard = () => {
-    const [name, setName] = useState('');
-    const [experience, setExperience] = useState('');
-    const [phone, setPhone] = useState('');
+    const [ name, setName ] = useState('');
+    const [ experience, setExperience ] = useState('');
+    const [ phone, setPhone ] = useState('');
 
     const addEmployee = async () => {
       try {
@@ -212,7 +214,7 @@ const EmployeeScreen = ({navigation}) => {
         if (phone && phone.length > 0) var p = phone.split(' ');
 
         formdata.append('name', name);
-        formdata.append('phone', '+91 ' + p[p.length - 1]);
+        formdata.append('phone', '+91 ' + p[ p.length - 1 ]);
         formdata.append('experience', experience);
 
         await ApiPost('/shop/add-employee', formdata);
@@ -241,18 +243,18 @@ const EmployeeScreen = ({navigation}) => {
                 padding: 10,
                 borderRadius: 30,
               }}>
-              <Text style={{textAlign: 'center', ...FONTS.h3}}>
+              <Text style={{ textAlign: 'center', ...FONTS.h3 }}>
                 Add Employee
               </Text>
-              <View style={{marginTop: 30, marginBottom: 10}}>
-                <View style={{marginVertical: 5}}>
+              <View style={{ marginTop: 30, marginBottom: 10 }}>
+                <View style={{ marginVertical: 5 }}>
                   <CustomInput
                     placeholder="Name"
                     value={name}
                     setValue={setName}
                   />
                 </View>
-                <View style={{marginVertical: 5}}>
+                <View style={{ marginVertical: 5 }}>
                   <CustomInput
                     placeholder="Experience"
                     value={experience}
@@ -260,7 +262,7 @@ const EmployeeScreen = ({navigation}) => {
                     type="decimal-pad"
                   />
                 </View>
-                <View style={{marginVertical: 5}}>
+                <View style={{ marginVertical: 5 }}>
                   <CustomInput
                     placeholder="phone"
                     value={phone}
@@ -269,7 +271,7 @@ const EmployeeScreen = ({navigation}) => {
                   />
                 </View>
               </View>
-              <View style={{alignItems: 'center', padding: 10, margin: 10}}>
+              <View style={{ alignItems: 'center', padding: 10, margin: 10 }}>
                 <CustomButton title="OK" onPress={addEmployee} />
               </View>
             </View>

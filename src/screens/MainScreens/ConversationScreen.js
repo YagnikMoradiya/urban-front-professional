@@ -12,12 +12,15 @@ import { CustomListItem } from '../../components';
 import { COLORS } from '../../utils/theme';
 import { ApiGet } from '../../utils/helper';
 import { useSelector } from 'react-redux';
+import { useIsFocused } from '@react-navigation/native';
 
 const ConversationScreen = ({ navigation }) => {
   const [ chats, setChats ] = useState([]);
+
+  const isFocused = useIsFocused();
   const [ selectedChat, setSelectedChat ] = useState(null);
 
-  const { conversations } = useSelector(state => state.conversationData);
+  // const { conversations } = useSelector(state => state.conversationData);
 
   const getConversations = async () => {
     try {
@@ -40,9 +43,9 @@ const ConversationScreen = ({ navigation }) => {
   //   // });
   // }, []);
 
-  // useEffect(() => {
-  //   getConversations();
-  // }, []);
+  useEffect(() => {
+    getConversations();
+  }, [ isFocused ]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -59,7 +62,7 @@ const ConversationScreen = ({ navigation }) => {
   return (
     <SafeAreaView>
       <StatusBar backgroundColor={COLORS.gray2} barStyle="dark-content" />
-      {conversations.length <= 0 ? (
+      {chats.length <= 0 ? (
         <Text
           style={{
             alignSelf: 'center',
@@ -71,7 +74,7 @@ const ConversationScreen = ({ navigation }) => {
         </Text>
       ) : null}
       <ScrollView>
-        {conversations.map(data => (
+        {chats.map(data => (
           <CustomListItem key={data._id} data={data} navigation={navigation} />
         ))}
       </ScrollView>

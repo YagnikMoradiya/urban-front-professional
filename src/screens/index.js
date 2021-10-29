@@ -10,6 +10,7 @@ import EmployeeScreen from './EmployeeScreens/EmployeeScreen';
 import ServiceScreen from './ServiceScreens/ServiceScreen';
 import ForgotPassword from './AuthScreens/ForgotPassword';
 import EditProfileScreen from './MainScreens/EditProfileScreen';
+import RequestScreen from './MainScreens/RequestScreen';
 
 export {
   SignInScreen,
@@ -23,5 +24,6 @@ export {
   EmployeeScreen,
   ServiceScreen,
   ForgotPassword,
-  EditProfileScreen
+  EditProfileScreen,
+  RequestScreen
 };

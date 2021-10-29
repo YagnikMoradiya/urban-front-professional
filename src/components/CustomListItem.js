@@ -1,20 +1,21 @@
-import React, {useState, useEffect} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
-import {Avatar, ListItem} from 'react-native-elements';
-import {useSelector} from 'react-redux';
-import {CustomAvatar} from '.';
-import {COLORS} from '../utils/theme';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import { Avatar, ListItem } from 'react-native-elements';
+import { useSelector } from 'react-redux';
+import { CustomAvatar } from '.';
+import { COLORS } from '../utils/theme';
 
-const CustomListItem = ({data, navigation}) => {
-  const [messages, setMessages] = useState([]);
-  const {shop} = useSelector(state => state.shopData);
+const CustomListItem = ({ data, navigation }) => {
+  const [ messages, setMessages ] = useState([]);
+  const { shop } = useSelector(state => state.shopData);
 
-  const friendsId = data.members.find(x => x !== shop._id);
+  const friendsId = data.members.find(x => x !== shop.id);
 
   const friendsData = {
-    image: data[`${friendsId}_image`],
-    name: data[`${friendsId}_name`],
+    image: data[ `${friendsId}_image` ],
+    name: data[ `${friendsId}_name` ],
   };
+
 
   useEffect(() => {
     //
@@ -38,7 +39,7 @@ const CustomListItem = ({data, navigation}) => {
         }}
       />
       <ListItem.Content>
-        <ListItem.Title style={{fontWeight: '800'}}>
+        <ListItem.Title style={{ fontWeight: '800' }}>
           {friendsData.name}
         </ListItem.Title>
         <ListItem.Subtitle numberOfLines={1} ellipsizeMode="tail">
