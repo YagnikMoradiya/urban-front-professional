@@ -83,7 +83,7 @@ const ProfileScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: COLORS.gray2,
     paddingHorizontal: 16,
     justifyContent: 'center'
   },

@@ -156,8 +156,8 @@ const ChatScreen = ({ navigation, route }) => {
                         size={30}
                         rounded
                         source={{
-                          uri: image
-                            ? image
+                          uri: shop?.avatar
+                            ? shop?.avatar
                             : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRyVSEPJut2FtINpbexjlW-PxQjDqV_jspoSw&usqp=CAU',
                         }}
                       />

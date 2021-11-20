@@ -174,10 +174,10 @@ const HomeScreen = ({ navigation }) => {
 const OrderStatusCard = ({ number, label, color }) => {
   return (
     <View>
-      <Text style={{ textAlign: 'center', ...FONTS.body3, color: color }}>
+      <Text style={{ textAlign: 'center', ...FONTS.body3, color: COLORS.black }}>
         {number}
       </Text>
-      <Text style={{ textAlign: 'center', ...FONTS.body3, color: color }}>
+      <Text style={{ textAlign: 'center', ...FONTS.body3, color: COLORS.black }}>
         {label}
       </Text>
     </View>

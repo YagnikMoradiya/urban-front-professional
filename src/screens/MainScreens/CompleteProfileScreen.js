@@ -95,16 +95,18 @@ const CompleteProfileScreen = ({ navigation }) => {
   const [ categories, setCategories ] = useState([]);
   const [ shopName, setShopName ] = useState('');
   const [ addressOne, setAddressOne ] = useState('');
-  const [ addressTwo, setAddressTwo ] = useState('');
+  // const [ addressTwo, setAddressTwo ] = useState('');
   const [ zipCode, setZipCode ] = useState('');
-  const [ states, setStates ] = useState([]);
-  const [ selectedState, setSelectedState ] = useState('');
-  const [ cities, setCities ] = useState([]);
-  const [ selectedCity, setSelectedCity ] = useState('');
+  // const [ states, setStates ] = useState([]);
+  const [ state, setState ] = useState('');
+  // const [ cities, setCities ] = useState([]);
+  const [ city, setCity ] = useState('');
   const [ employeeName, setEmployeeName ] = useState('');
   const [ phone, setPhone ] = useState('');
   const [ experience, setExperience ] = useState('');
   const [ image, setImage ] = useState('');
+  const [ sstate, setSstate ] = useState('');
+  const [ ccity, setCcity ] = useState('');
   const [ profileTrake, setProfileTrake ] = useState({
     generalDetail: false,
     addressDetail: false,
@@ -133,23 +135,23 @@ const CompleteProfileScreen = ({ navigation }) => {
     }
   };
 
-  const getState = async () => {
-    try {
-      const states = await ApiGetNoAuth('/general/state');
-      setStates(states.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  // const getState = async () => {
+  //   try {
+  //     const states = await ApiGetNoAuth('/general/state');
+  //     setStates(states.data);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
-  const getCity = async city => {
-    try {
-      const cities = await ApiGetNoAuth(`/general/city/${city}`);
-      setCities(cities.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  // const getCity = async city => {
+  //   try {
+  //     const cities = await ApiGetNoAuth(`/general/city/${city}`);
+  //     setCities(cities.data);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
   const chooseImage = () => {
     let options = {
@@ -189,6 +191,24 @@ const CompleteProfileScreen = ({ navigation }) => {
     }
   };
 
+  const addGeneralDetail = async () => {
+    if (name === '' || selectedCategory === '' || ccity === "" || sstate === "" || openingTime === "" || closingTime === '') return;
+
+    try {
+      const data = await ApiPost('/shop/general-detail', {
+        owner_name: name,
+        category: selectedCategory,
+        start_time: openingTime,
+        end_time: closingTime,
+        state: sstate,
+        city: ccity,
+      })
+      getTrakeOfDetail();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   const addEmployee = async () => {
     if (employeeName === '' || phone === '' || experience === '') return;
 
@@ -217,15 +237,15 @@ const CompleteProfileScreen = ({ navigation }) => {
       shopName !== '' ||
       addressOne !== '' ||
       zipCode !== '' ||
-      selectedState !== '' ||
-      selectedCity !== ''
+      state !== '' ||
+      city !== ''
     ) {
       try {
         let addressData = {
           name: shopName,
-          streetAddress: addressOne + ' ' + addressTwo,
-          city: selectedCity,
-          state: selectedState,
+          streetAddress: addressOne,
+          city,
+          state,
           zipCode: zipCode,
         };
 
@@ -251,15 +271,10 @@ const CompleteProfileScreen = ({ navigation }) => {
 
   useEffect(() => {
     getCategory();
-    getState();
+    // getState();
     getTrakeOfDetail();
   }, []);
 
-  useEffect(() => {
-    if (selectedState !== '') {
-      getCity(selectedState);
-    }
-  }, [ selectedState ]);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -272,6 +287,16 @@ const CompleteProfileScreen = ({ navigation }) => {
             value={name}
             setValue={setName}
             placeholder="Owner's name"
+          />
+          <TextInputCustom
+            value={ccity}
+            setValue={setCcity}
+            placeholder="City"
+          />
+          <TextInputCustom
+            value={sstate}
+            setValue={setSstate}
+            placeholder="State"
           />
           <View
             style={{
@@ -355,8 +380,9 @@ const CompleteProfileScreen = ({ navigation }) => {
               </View>
             </View>
           </View>
+
           <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-            <CustomNextButton title="Add" />
+            <CustomNextButton title="Add" onPress={addGeneralDetail} />
           </View>
         </View>
       )}
@@ -376,67 +402,20 @@ const CompleteProfileScreen = ({ navigation }) => {
             placeholder="Address line one"
           />
           <TextInputCustom
-            value={addressTwo}
-            setValue={setAddressTwo}
-            placeholder="Address line two"
+            value={city}
+            setValue={setCity}
+            placeholder="City"
+          />
+          <TextInputCustom
+            value={state}
+            setValue={setState}
+            placeholder="State"
           />
           <TextInputCustom
             value={zipCode}
             setValue={setZipCode}
             placeholder="Zipcode"
           />
-          {/* <View
-            style={{
-              borderBottomWidth: 1,
-              borderBottomColor: COLORS.gray,
-              margin: 15,
-            }}> */}
-          {/* <Picker
-              mode="dialog"
-              selectedValue={selectedState}
-              onValueChange={(itemValue, itemIndex) =>
-                setSelectedState(itemValue)
-              }>
-              {states.map(c => (
-                <Picker.Item
-                  fontFamily="Roboto-light"
-                  label={c.name}
-                  value={c.name}
-                  key={c._id}
-                />
-              ))}
-            </Picker> */}
-          {/* </View> */}
-          {cities.length > 0 && (
-            <View
-            // style={{
-            //   borderBottomWidth: 1,
-            //   borderBottomColor: COLORS.gray,
-            //   margin: 15,
-            // }}
-            >
-              {/* <Picker
-                mode="dialog"
-                selectedValue={selectedCity}
-                onValueChange={(itemValue, itemIndex) =>
-                  setSelectedCity(itemValue)
-                }>
-                {cities.map(c => (
-                  <Picker.Item
-                    fontFamily="Roboto-light"
-                    label={c.name}
-                    value={c.name}
-                    key={c._id}
-                  />
-                ))}
-              </Picker> */}
-              <TextInputCustom
-                value={selectedCity}
-                setValue={setSelectedCity}
-                placeholder="City"
-              />
-            </View>
-          )}
           <View style={{ alignItems: 'center', justifyContent: 'center' }}>
             <CustomNextButton title="Add" onPress={addAddress} />
           </View>
